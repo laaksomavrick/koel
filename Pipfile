@@ -7,6 +7,10 @@ verify_ssl = true
 
 [packages]
 pyyaml = "*"
+feedparser = "*"
+boto3 = "*"
+smart-open = "*"
+python-dateutil = "*"
 
 [requires]
 python_version = "3.7"
