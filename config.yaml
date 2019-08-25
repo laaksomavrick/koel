@@ -1,2 +1,7 @@
 atom_feed_url: "https://weather.gc.ca/rss/battleboard/on21_e.xml"
 filesystem_url: "alerts.json"
+twilio_from_number: "+17058055472"
+twilio_account_sid: "ACcefcfb4a575e452810de9222c59aa4d0"
+twilio_auth_token: "82802efa7b96082c3ade1fea914b13ff"
+phone_numbers:
+  - "+17058229262"

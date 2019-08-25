@@ -11,6 +11,7 @@ feedparser = "*"
 boto3 = "*"
 smart-open = "*"
 python-dateutil = "*"
+twilio = "*"
 
 [requires]
 python_version = "3.7"
