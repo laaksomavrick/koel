@@ -1,19 +1,16 @@
-import config
-import parser
-import alerts
+from alerts import Alerter
+from config import Config
+from parser import Parser
 from sms_client import SMSClient
 
+config = Config()
 
-config_values = config.read()
-atom_feed_url = config_values['atom_feed_url']
-filesystem_url = config_values['filesystem_url']
+sms_client = SMSClient(config)
 
-sms_client = SMSClient(config_values)
+parsed_alerts = Parser.parse(config.atom_feed_url)
 
-# todo class Parser
-parsed_alerts = parser.parse(atom_feed_url)
-
-alerts.process(sms_client, parsed_alerts, filesystem_url)
+alerter = Alerter(sms_client, config.filesystem_url, parsed_alerts)
+alerter.notify_and_store_alerts()
 
 # TODO:
 # twilio
@@ -28,6 +25,6 @@ alerts.process(sms_client, parsed_alerts, filesystem_url)
 
 # external resources (cloudformation):
 
-    # create a s3 bucket
-    # create a lambda function
-    # run lambda on a schedule (cron or otherwise)
+# create a s3 bucket
+# create a lambda function
+# run lambda on a schedule (cron or otherwise)
