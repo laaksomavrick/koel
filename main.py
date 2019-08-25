@@ -1,7 +1,7 @@
-from alerts import Alerter
-from config import Config
-from parser import Parser
-from sms_client import SMSClient
+from koel.alerts import Alerter
+from koel.config import Config
+from koel.parser import Parser
+from koel.sms_client import SMSClient
 
 config = Config()
 
@@ -13,11 +13,9 @@ alerter = Alerter(sms_client, config.filesystem_url, parsed_alerts)
 alerter.notify_and_store_alerts()
 
 # TODO:
-# twilio
-# class re-org
-# folder re-org
 # tests (mocked)
-# error handling (ie: log error and program state when an error occurs)
+# todos, tests for those todos :)
+# error handling/logging (ie: log error and program state when an error occurs)
 # see https://docs.aws.amazon.com/lambda/latest/dg/python-logging.html
 # cloudformation
 # comments, code formatting, README

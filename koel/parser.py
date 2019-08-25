@@ -1,6 +1,6 @@
 import feedparser
 from typing import List
-from alerts import Alert
+from koel.alerts import Alert
 
 
 class Parser:

@@ -4,7 +4,7 @@ from typing import List, Dict
 
 import dateutil.parser
 
-from sms_client import SMSClient
+from koel.sms_client import SMSClient
 
 
 @dataclass
@@ -21,17 +21,8 @@ class Alert:
     def updated_date(self):
         return dateutil.parser.parse(self.published)
 
-    def sms(self):
+    def sms(self) -> str:
         return self.summary
-
-    # def __dict__(self):
-    #     return {
-    #         'id': self.id,
-    #         'title': self.title,
-    #         'updated': self.updated,
-    #         'published': self.published,
-    #         'summary': self.summary
-    #     }
 
 
 class AlertStorage:
@@ -79,11 +70,11 @@ class Alerter:
 
     def notify_and_store_alert(self, alert: Alert):
         """
-            We only want to send updates for new weather alerts so as to not spam the user, so we verify that either:
-                - an alert has not yet been seen
-                - it has been seen, that is has been updated since last being seen
-            Meeting either of these conditions means we'll send the list of phone numbers a text with
-            the weather alert contents.
+        We only want to send updates for new weather alerts so as to not spam the user, so we verify that either:
+            - an alert has not yet been seen
+            - it has been seen, that is has been updated since last being seen
+        Meeting either of these conditions means we'll send the list of phone numbers a text with
+        the weather alert contents.
 
         :param alert: An instance of an alert. See the Alert class.
         :return:

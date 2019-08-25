@@ -1,5 +1,5 @@
 from twilio.rest import Client
-from config import Config
+from koel.config import Config
 
 
 class SMSClient:
