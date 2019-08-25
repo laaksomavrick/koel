@@ -23,6 +23,7 @@ alerts.process(sms_client, parsed_alerts, filesystem_url)
 # error handling (ie: log error and program state when an error occurs)
 # see https://docs.aws.amazon.com/lambda/latest/dg/python-logging.html
 # cloudformation
+# comments, code formatting, README
 # deploy
 
 # external resources (cloudformation):

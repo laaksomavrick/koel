@@ -1,0 +1,7 @@
+atom_feed_url: "https://weather.gc.ca/rss/battleboard/on21_e.xml"
+filesystem_url: "s3://somewhere"
+twilio_from_number: ""
+twilio_account_sid: ""
+twilio_auth_token: ""
+phone_numbers:
+  - ""
