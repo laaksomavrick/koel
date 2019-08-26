@@ -19,7 +19,7 @@ class Alert:
         return dateutil.parser.parse(self.published)
 
     def updated_date(self):
-        return dateutil.parser.parse(self.published)
+        return dateutil.parser.parse(self.updated)
 
     def sms(self) -> str:
         return self.summary
