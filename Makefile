@@ -1,7 +1,10 @@
-.PHONY: test run
+.PHONY: shell test run
+
+shell:
+	@pipenv shell
 
 run:
 	@python main.py
 
 test:
-	@python -m unittest tests/alerts_test.py
+	@python -m unittest tests/koel_tests.py

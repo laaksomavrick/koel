@@ -17,6 +17,7 @@ alerter.notify_and_store_alerts()
 # todos, tests for those todos :)
 # error handling/logging (ie: log error and program state when an error occurs)
 # see https://docs.aws.amazon.com/lambda/latest/dg/python-logging.html
+
 # cloudformation
 # comments, code formatting, README
 # deploy

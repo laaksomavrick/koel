@@ -1,7 +1,9 @@
+import json
 import unittest
 from datetime import datetime
-from unittest.mock import MagicMock
-from koel.alerts import Alert
+from unittest.mock import MagicMock, mock_open, patch
+from koel.alerts import Alert, AlertStorage
+import builtins
 
 
 class AlertsTests(unittest.TestCase):
@@ -28,6 +30,27 @@ class AlertsTests(unittest.TestCase):
         alert = Alert(id="id", title="title", updated="updated", published="published", summary="summary")
         sms = alert.sms()
         self.assertEqual(sms, alert.summary)
+
+
+class AlertStorageTests(unittest.TestCase):
+
+    def test_read_storage(self):
+        alerts_dict = {
+            "tag:weather.gc.ca,2013-04-16:20190822014505": {
+                "id": "tag:weather.gc.ca,2013-04-16:20190822014505",
+                "title": "No alerts in effect, London - Middlesex",
+                "updated": "2019-08-22T01:45:05Z",
+                "published": "2019-08-22T01:45:05Z",
+                "summary": "No alerts in effect"
+            }
+        }
+        alerts_string = json.dumps(alerts_dict)
+        with patch('builtins.open', mock_open(read_data=alerts_string)):
+            alerts = AlertStorage.read_storage("foo")
+            alert = alerts['tag:weather.gc.ca,2013-04-16:20190822014505']
+            self.assertIsNotNone(alert)
+            self.assertIsInstance(alert, Alert)
+
 
 
 # AlertStorageTests
