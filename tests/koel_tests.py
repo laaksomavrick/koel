@@ -2,8 +2,8 @@ import json
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock, mock_open, patch
+
 from koel.alerts import Alert, AlertStorage
-import builtins
 
 
 class AlertsTests(unittest.TestCase):
@@ -51,24 +51,38 @@ class AlertStorageTests(unittest.TestCase):
             self.assertIsNotNone(alert)
             self.assertIsInstance(alert, Alert)
 
+    def test_write_storage(self):
+        alerts_log = {
+            "tag:weather.gc.ca,2013-04-16:20190822014505": Alert(
+                id="id", title="title", updated="updated", published="published", summary="summary"
+            )
+        }
+        fs_path = "foo"
+        with patch('builtins.open', new_callable=mock_open()) as mock_file:
+            with patch('json.dump') as mock_json:
+                AlertStorage.write_storage(fs_path, alerts_log)
+                mock_file.assert_called_with(fs_path, 'w')
+                mock_json.assert_called_with({
+                    "tag:weather.gc.ca,2013-04-16:20190822014505": {
+                        "id": "id",
+                        "title": "title",
+                        "updated": "updated",
+                        "published": "published",
+                        "summary": "summary",
+                    }
+                }, mock_file.return_value.__enter__.return_value)
 
-
-# AlertStorageTests
-    # mock fs
-    # it can read from a valid json file and return a Dict[str, Alert]
-    # it throws when the file doesnt exist for read
-    # it can write to a json file
-    # if the file doesn't exist, it creates it with an empty {}, then writes
+    # TODO if the file doesn't exist, it creates it with an empty {}, then writes
 
 # AlerterTests
-    # if alert is new, it sends and stores
-    # if alert is updated, it sends and stores
-    # if alert is not updated, it does nothing
+# if alert is new, it sends and stores
+# if alert is updated, it sends and stores
+# if alert is not updated, it does nothing
 
 # ParserTests
-    # it returns a list of Alerts (mock feedparser.parse)
-    # if no entries, does nothing
+# it returns a list of Alerts (mock feedparser.parse)
+# if no entries, does nothing
 
 # SmsClientTests
-    # sends for each to_number
-    # sends from proper from_number
+# sends for each to_number
+# sends from proper from_number
