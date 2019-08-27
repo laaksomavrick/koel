@@ -14,6 +14,7 @@ alerter.notify_and_store_alerts()
 
 # TODO:
 # tests (mocked)
+# project setup stuff
 # todos, tests for those todos :)
 # error handling/logging (ie: log error and program state when an error occurs)
 # see https://docs.aws.amazon.com/lambda/latest/dg/python-logging.html

@@ -4,11 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+black = "*"
+isort = "*"
+flake8 = "*"
+mypy = "*"
 
 [packages]
 pyyaml = "*"
 feedparser = "*"
-boto3 = "*"
 smart-open = "*"
 python-dateutil = "*"
 twilio = "*"

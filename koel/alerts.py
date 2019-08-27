@@ -1,6 +1,6 @@
 import json
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import Dict, List
 
 import dateutil.parser
 
@@ -26,7 +26,6 @@ class Alert:
 
 
 class AlertStorage:
-
     @staticmethod
     def read_storage(fs_path: str) -> Dict[str, Alert]:
         with open(fs_path) as json_file:
@@ -35,12 +34,17 @@ class AlertStorage:
             for alert_id in dump.keys():
                 alert = dump[alert_id]
 
-                title = alert['title']
-                updated = alert['updated']
-                published = alert['published']
-                summary = alert['summary']
-                storage[alert_id] = Alert(id=alert_id, title=title, updated=updated, published=published,
-                                          summary=summary)
+                title = alert["title"]
+                updated = alert["updated"]
+                published = alert["published"]
+                summary = alert["summary"]
+                storage[alert_id] = Alert(
+                    id=alert_id,
+                    title=title,
+                    updated=updated,
+                    published=published,
+                    summary=summary,
+                )
             return storage
 
     @staticmethod
@@ -51,12 +55,11 @@ class AlertStorage:
         for key in alerts_log.keys():
             serializable_alerts_log[key] = alerts_log[key].__dict__
 
-        with open(fs_path, 'w') as outfile:
+        with open(fs_path, "w") as outfile:
             json.dump(serializable_alerts_log, outfile)
 
 
 class Alerter:
-
     def __init__(self, sms_client: SMSClient, fs_path: str, alerts: List[Alert]):
         self.sms_client = sms_client
         self.fs_path = fs_path
