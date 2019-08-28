@@ -1,6 +1,7 @@
 from typing import List
 
 import feedparser
+import logging
 
 from koel.alerts import Alert
 
@@ -8,6 +9,7 @@ from koel.alerts import Alert
 class Parser:
     @staticmethod
     def parse(url: str) -> List[Alert]:
+        logging.info(f"Parsing alerts from {url}")
         alerts = []
         d = feedparser.parse(url)
         entries = d.entries

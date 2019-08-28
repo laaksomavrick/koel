@@ -2,6 +2,8 @@ from twilio.rest import Client
 
 from koel.config import Config
 
+import logging
+
 
 class SMSClient:
     def __init__(self, config: Config):
@@ -14,6 +16,7 @@ class SMSClient:
 
     def send(self, message):
         for to_number in self.to_numbers:
+            logging.info(f"Sending sms to {to_number} from ${self.from_number}")
             self.client.messages.create(
                 to=to_number, from_=self.from_number, body=message
             )

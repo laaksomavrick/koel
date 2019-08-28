@@ -1,8 +1,10 @@
 import yaml
+import logging
 
 
 class Config:
     def __init__(self):
+        logging.info("Reading config from config.yaml")
         with open("config.yaml", "r") as stream:
             try:
                 config = yaml.safe_load(stream)
@@ -13,5 +15,4 @@ class Config:
                 self.twilio_auth_token = config["twilio_auth_token"]
                 self.phone_numbers = config["phone_numbers"]
             except yaml.YAMLError as exc:
-                print("An error occurred parsing config.yaml")
-                print(exc)
+                logging.error("An error occurred reading config.", exc_info=True)

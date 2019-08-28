@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 import dateutil.parser
+import logging
 
 from koel.sms_client import SMSClient
 
@@ -29,34 +30,40 @@ class AlertStorage:
     @staticmethod
     def read_storage(fs_path: str) -> Dict[str, Alert]:
         with open(fs_path) as json_file:
-            storage = {}
-            dump = json.load(json_file)
-            for alert_id in dump.keys():
-                alert = dump[alert_id]
+            try:
+                storage = {}
+                dump = json.load(json_file)
+                for alert_id in dump.keys():
+                    alert = dump[alert_id]
 
-                title = alert["title"]
-                updated = alert["updated"]
-                published = alert["published"]
-                summary = alert["summary"]
-                storage[alert_id] = Alert(
-                    id=alert_id,
-                    title=title,
-                    updated=updated,
-                    published=published,
-                    summary=summary,
-                )
-            return storage
+                    title = alert["title"]
+                    updated = alert["updated"]
+                    published = alert["published"]
+                    summary = alert["summary"]
+                    storage[alert_id] = Alert(
+                        id=alert_id,
+                        title=title,
+                        updated=updated,
+                        published=published,
+                        summary=summary,
+                    )
+                return storage
+            except:
+                logging.error(f"An error occurred reading from storage with path: {fs_path}", exc_info=True)
 
     @staticmethod
     def write_storage(fs_path: str, alerts_log: Dict[str, Alert]):
-        # TODO: investigate why we need to call __dict__
-        serializable_alerts_log = {}
+        try:
+            # TODO: investigate why we need to call __dict__
+            serializable_alerts_log = {}
 
-        for key in alerts_log.keys():
-            serializable_alerts_log[key] = alerts_log[key].__dict__
+            for key in alerts_log.keys():
+                serializable_alerts_log[key] = alerts_log[key].__dict__
 
-        with open(fs_path, "w") as outfile:
-            json.dump(serializable_alerts_log, outfile)
+            with open(fs_path, "w") as outfile:
+                json.dump(serializable_alerts_log, outfile)
+        except:
+            logging.error(f"An error occurred writing to storage with path: {fs_path} and log: {alerts_log}", exc_info=True)
 
 
 class Alerter:
@@ -82,6 +89,7 @@ class Alerter:
         :param alert: An instance of an alert. See the Alert class.
         :return:
         """
+        logging.info(f"Processing alert: {alert.id}")
         alert_id = alert.id
         known_alert = alert_id in self.alerts_log
 
@@ -94,14 +102,14 @@ class Alerter:
             new_alert = updated > published
 
             if new_alert:
-                print("new alert for existing entry")
+                logging.info(f"New alert for existing entry: {alert_id}")
                 self.upsert_alerts_log(alert)
                 sms = alert.sms()
                 self.sms_client.send(sms)
             else:
-                print("old or same alert, doing nothing")
+                logging.info(f"Old or same alert, doing nothing: {alert_id}")
         else:
-            print("new alert")
+            logging.info(f"New alert: {alert_id}")
             self.upsert_alerts_log(alert)
             sms = alert.sms()
             self.sms_client.send(sms)
