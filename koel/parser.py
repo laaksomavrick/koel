@@ -1,7 +1,7 @@
+import logging
 from typing import List
 
 import feedparser
-import logging
 
 from koel.alerts import Alert
 

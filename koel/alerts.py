@@ -1,9 +1,9 @@
 import json
+import logging
 from dataclasses import dataclass
 from typing import Dict, List
 
 import dateutil.parser
-import logging
 
 from koel.sms_client import SMSClient
 
@@ -49,7 +49,10 @@ class AlertStorage:
                     )
                 return storage
             except:
-                logging.error(f"An error occurred reading from storage with path: {fs_path}", exc_info=True)
+                logging.error(
+                    f"An error occurred reading from storage with path: {fs_path}",
+                    exc_info=True,
+                )
 
     @staticmethod
     def write_storage(fs_path: str, alerts_log: Dict[str, Alert]):
@@ -63,7 +66,10 @@ class AlertStorage:
             with open(fs_path, "w") as outfile:
                 json.dump(serializable_alerts_log, outfile)
         except:
-            logging.error(f"An error occurred writing to storage with path: {fs_path} and log: {alerts_log}", exc_info=True)
+            logging.error(
+                f"An error occurred writing to storage with path: {fs_path} and log: {alerts_log}",
+                exc_info=True,
+            )
 
 
 class Alerter:

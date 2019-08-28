@@ -1,8 +1,8 @@
+import logging
+
 from twilio.rest import Client
 
 from koel.config import Config
-
-import logging
 
 
 class SMSClient:
