@@ -1,9 +1,11 @@
 import json
 import unittest
 from datetime import datetime
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open, patch, MagicMock
 
-from koel.alerts import Alert, AlertStorage
+from koel.alerts import Alert, AlertStorage, Alerter
+from koel.config import Config
+from koel.sms_client import SMSClient
 
 
 class AlertsTests(unittest.TestCase):
@@ -106,15 +108,93 @@ class AlertStorageTests(unittest.TestCase):
     # TODO if the file doesn't exist, it creates it with an empty {}, then writes
 
 
-# AlerterTests
-# if alert is new, it sends and stores
-# if alert is updated, it sends and stores
-# if alert is not updated, it does nothing
+@patch('koel.alerts.AlertStorage.write_storage')
+@patch('koel.alerts.AlertStorage.read_storage')
+class AlerterTests(unittest.TestCase):
 
-# ParserTests
-# it returns a list of Alerts (mock feedparser.parse)
-# if no entries, does nothing
+    def setUp(self):
+        self.sms_client = MagicMock()
+        self.sms_client.send = MagicMock()
 
-# SmsClientTests
-# sends for each to_number
-# sends from proper from_number
+    def test_newly_found_alert(self, mocked_read_storage, mocked_write_storage):
+        mocked_read_storage.return_value = {"foo": Alert(
+            id="some_id",
+            title="title",
+            updated="2019-08-22T01:45:05Z",
+            published="published",
+            summary="summary",
+        )}
+
+        fs_path = "alerts.json"
+        alerts = [Alert(
+            id="some_other_id",
+            title="title",
+            updated="2019-08-22T01:45:05Z",
+            published="published",
+            summary="summary",
+        )]
+
+        alerter = Alerter(self.sms_client, fs_path, alerts)
+        alerter.notify_and_store_alerts()
+
+        self.sms_client.send.assert_called_once()
+        mocked_write_storage.assert_called_once()
+        self.assertTrue(alerter.alerts_log["some_other_id"] is not None)
+
+    def test_known_alert_updated(self, mocked_read_storage, mocked_write_storage):
+        alert_id = "some_id"
+        published = "2019-08-22T01:45:05Z"
+        new_updated = "2019-09-22T01:45:05Z"
+        fs_path = "alerts.json"
+
+        mocked_read_storage.return_value = {alert_id: Alert(
+            id=alert_id,
+            title="title",
+            updated=published,
+            published=published,
+            summary="summary",
+        )}
+
+        alerts = [Alert(
+            id=alert_id,
+            title="title",
+            updated=new_updated,
+            published=published,
+            summary="summary",
+        )]
+
+        alerter = Alerter(self.sms_client, fs_path, alerts)
+        alerter.notify_and_store_alerts()
+
+        self.sms_client.send.assert_called_once()
+        mocked_write_storage.assert_called_once()
+        self.assertTrue(alerter.alerts_log["some_id"].updated == new_updated)
+
+
+    def test_known_alert_not_updated(self, mocked_read_storage, mocked_write_storage):
+        alert_id = "some_id"
+        published = "2019-08-22T01:45:05Z"
+        fs_path = "alerts.json"
+
+        mocked_read_storage.return_value = {alert_id: Alert(
+            id=alert_id,
+            title="title",
+            updated=published,
+            published=published,
+            summary="summary",
+        )}
+
+        alerts = [Alert(
+            id=alert_id,
+            title="title",
+            updated=published,
+            published=published,
+            summary="summary",
+        )]
+
+        alerter = Alerter(self.sms_client, fs_path, alerts)
+        alerter.notify_and_store_alerts()
+
+        self.sms_client.send.assert_not_called()
+        mocked_write_storage.assert_not_called()
+        self.assertTrue(alerter.alerts_log["some_id"].updated == published)
