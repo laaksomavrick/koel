@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from dataclasses import dataclass
 from typing import Dict, List
 
@@ -71,12 +72,22 @@ class AlertStorage:
                 exc_info=True,
             )
 
+    @staticmethod
+    def create_storage(fs_path):
+        logging.info(f"Creating storage at: {fs_path}")
+        with open(fs_path, "w+") as file:
+            json.dump({}, file)
+
+    @staticmethod
+    def storage_exists(fs_path: str) -> bool:
+        return os.path.exists(fs_path)
+
 
 class Alerter:
     def __init__(self, sms_client: SMSClient, fs_path: str, alerts: List[Alert]):
         self.sms_client = sms_client
         self.fs_path = fs_path
-        # TODO: if it doesn't exist, write {}
+        # Don't love statically initializing this
         self.alerts_log = AlertStorage.read_storage(fs_path)
         self.alerts = alerts
 

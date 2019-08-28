@@ -105,8 +105,6 @@ class AlertStorageTests(unittest.TestCase):
                 mock_file.return_value.__enter__.return_value,
             )
 
-    # TODO if the file doesn't exist, it creates it with an empty {}, then writes
-
 
 @patch("koel.alerts.AlertStorage.write_storage")
 @patch("koel.alerts.AlertStorage.read_storage")

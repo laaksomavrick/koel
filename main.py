@@ -1,12 +1,17 @@
-from koel.alerts import Alerter
+from koel.alerts import Alerter, AlertStorage
 from koel.config import Config
 from koel.parser import Parser
 from koel.sms_client import SMSClient
 import logging
+import sys
 
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logging.info("Booting up koel...")
 
 config = Config()
+
+if AlertStorage.storage_exists(config.filesystem_url) is False:
+    AlertStorage.create_storage(config.filesystem_url)
 
 sms_client = SMSClient(config)
 
@@ -16,7 +21,6 @@ alerter = Alerter(sms_client, config.filesystem_url, parsed_alerts)
 alerter.notify_and_store_alerts()
 
 # TODO:
-# todos, tests for those todos :)
 
 # cloudformation
 # comments, code formatting, README
