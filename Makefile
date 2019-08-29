@@ -1,4 +1,4 @@
-.PHONY: shell test run format sort_imports lint
+.PHONY: shell test run format sort_imports lint deploy destroy
 
 shell:
 	@pipenv shell
@@ -17,3 +17,9 @@ sort_imports:
 
 lint:
 	@pipenv run flake8
+
+deploy:
+	@scripts/deploy.sh
+
+destroy:
+	@scripts/destroy.sh
