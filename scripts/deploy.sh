@@ -1,25 +1,37 @@
 #!/bin/sh
 
-# Create a zip archive of koel and its dependencies
-rm -rf ./build
-mkdir ./build
-pipenv lock -r > build/requirements.txt
-pipenv run pip download -d ./build/vendor -r ./build/requirements.txt
-zip -r build/lambda.zip build/vendor
-zip -gr build/lambda.zip koel
-zip -g build/lambda.zip main.py
-zip -g build/lambda.zip config.yaml
+# TODO: if pwd != koel; error and return
 
-# Create a bucket specifically for our lambda functions
+SITE_PACKAGES=$(pipenv --venv)/lib/python3.7/site-packages
+DIR=$(pwd)
+BUILD_DIR=$(pwd)/build
+LAMBDA_ZIP="$BUILD_DIR"/lambda.zip
+
+echo "Creating build folder..."
+rm -rf "$BUILD_DIR"
+mkdir "$BUILD_DIR"
+
+echo "Installing all packages..."
+pipenv install
+
+echo "Installing packages to build folder..."
+cd "$SITE_PACKAGES" || exit
+zip -r "$LAMBDA_ZIP" ./*
+
+echo "Installing source to build folder..."
+cd "$DIR" || exit
+zip -g "$LAMBDA_ZIP" config.yaml main.py koel
+
+echo "Creating bucket for python deployment zip..."
 aws s3api create-bucket --bucket=koel-lambda-code
 
-# Upload our lambda function to that bucket
-# TODO: paramaterize this with a version number
-aws s3api put-object --bucket koel-lambda-code --key koel:0.0.1 --body ./build/lambda.zip
+echo "Uploading zip to bucket..."
+# TODO: parameterize this with a version number
+aws s3api put-object --bucket koel-lambda-code --key koel:0.0.1.zip --body build/lambda.zip
 
-# Create our s3 bucket and lambda
+echo "Creating cloudformation stack..."
 aws cloudformation create-stack \
                   --stack-name koel \
                   --template-body file://cloudformation.yaml \
                   --capabilities CAPABILITY_NAMED_IAM \
-                  --parameters ParameterKey=S3Bucket,ParameterValue=koel-lambda-code ParameterKey=S3Key,ParameterValue=koel:0.0.1
+                  --parameters ParameterKey=S3Bucket,ParameterValue=koel-lambda-code ParameterKey=S3Key,ParameterValue=koel:0.0.1.zip
