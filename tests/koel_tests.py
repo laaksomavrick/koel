@@ -2,10 +2,7 @@ import json
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock, mock_open, patch
-
 from koel.alerts import Alert, Alerter, AlertStorage
-from koel.config import Config
-from koel.sms_client import SMSClient
 
 
 class AlertsTests(unittest.TestCase):
@@ -74,6 +71,7 @@ class AlertStorageTests(unittest.TestCase):
             alert = alerts["tag:weather.gc.ca,2013-04-16:20190822014505"]
             self.assertIsNotNone(alert)
             self.assertIsInstance(alert, Alert)
+
 
     def test_write_storage(self):
         alerts_log = {

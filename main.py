@@ -6,7 +6,6 @@ import logging
 import sys
 
 
-
 def handler(event, context):
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     logging.info("Booting up koel...")
@@ -24,8 +23,6 @@ def handler(event, context):
     alerter.notify_and_store_alerts()
 
 # TODO:
-
-# Python script to zip cause zip bash command aint workin
-    # pipenv shell
-    # python scripts/makezip.py
-# run lambda on a schedule (cron or otherwise)
+    # Documentation, README
+    # Config options, set up, project dependencies/assumptions
+    # Format, run tests, push up
