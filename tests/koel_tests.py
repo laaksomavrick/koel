@@ -72,7 +72,6 @@ class AlertStorageTests(unittest.TestCase):
             self.assertIsNotNone(alert)
             self.assertIsInstance(alert, Alert)
 
-
     def test_write_storage(self):
         alerts_log = {
             "tag:weather.gc.ca,2013-04-16:20190822014505": Alert(

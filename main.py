@@ -21,8 +21,3 @@ def handler(event, context):
 
     alerter = Alerter(sms_client, config.filesystem_url, parsed_alerts)
     alerter.notify_and_store_alerts()
-
-# TODO:
-    # Documentation, README
-    # Config options, set up, project dependencies/assumptions
-    # Format, run tests, push up
