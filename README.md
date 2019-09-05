@@ -22,7 +22,7 @@ Prerequisites:
   * A Twilio account with either free tier eligibility or enough credits
   
 Assuming you have all these, clone the repo and copy the `config.example.yaml` to `config.yaml` and fill in the values appropriately.
-`filesystem_url` is intended to be a valid `s3` bucket url (should be the same defined in your `cloudformation.yaml`, and `atom_feed_url` is the url of the Government of Canada's
+`filesystem_url` is intended to be a valid `s3` bucket url (should be the same defined in your `cloudformation.yaml`), and `atom_feed_url` is the url of the Government of Canada's
 weather rss feed for your desired location.
 
 Given AWS resources usually have a globally unique ARN, you'll likely have to change around some of the `cloudformation.yaml` values for
@@ -35,4 +35,4 @@ Once you've done that, run `make deploy`. To tear everything down, run `make des
 
 Things are set up to make this easy. The `Makefile` provides the common commands for development tasks, like formatting the code
 you write or running the tests. `filesystem_url` can also point to a local file for development purposes, which is why the `alerts.json` file has been included
-in the repository.
+in the repository. `pipenv` was used for package management, so you'll have to run `pipenv install` in order to download the project's dependencies and to ensure the appropriate python version via `make shell`.
