@@ -1,4 +1,4 @@
-.PHONY: shell test run format sort_imports lint deploy destroy
+.PHONY: shell test run format sort_imports lint deploy destroy invoke
 
 shell:
 	@pipenv shell
@@ -23,3 +23,6 @@ deploy:
 
 destroy:
 	@scripts/destroy.sh
+
+invoke:
+	@scripts/invoke.sh $(id)

@@ -6,7 +6,8 @@ import logging
 import sys
 
 
-def handler():
+
+def handler(event, context):
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     logging.info("Booting up koel...")
 
@@ -24,6 +25,7 @@ def handler():
 
 # TODO:
 
-# create a s3 bucket
-# create a lambda function
+# Python script to zip cause zip bash command aint workin
+    # pipenv shell
+    # python scripts/makezip.py
 # run lambda on a schedule (cron or otherwise)

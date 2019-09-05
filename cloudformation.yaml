@@ -25,13 +25,29 @@ Resources:
                 - s3.amazonaws.com
             Action:
               - sts:AssumeRole
+      Path: '/'
+      RoleName: RawDataBucketAccessRole
+      Policies:
+        -
+          PolicyName: RawDataBucketAccessRole
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - 's3:Get*'
+                  - 's3:List*'
+                  - 's3:Put*'
+                Resource: '*'
   LambdaFunction:
     Type: AWS::Lambda::Function
     DependsOn: LambdaRole
     Properties:
       Handler: 'main.handler'
       Role: !GetAtt LambdaRole.Arn
-      Runtime: python3.6
+      Runtime: python3.7
+      Timeout: 10
       Code:
         S3Bucket: !Ref S3Bucket
         S3Key: !Ref S3Key
