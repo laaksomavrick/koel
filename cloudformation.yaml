@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'todo'
+Description: 'The koel cloudformation stack'
 Parameters:
   S3Bucket:
     Type: String
@@ -12,7 +12,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: 'koel-storage'
-  LambdaRole:
+  S3Role:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -42,12 +42,27 @@ Resources:
                 Resource: '*'
   LambdaFunction:
     Type: AWS::Lambda::Function
-    DependsOn: LambdaRole
+    DependsOn: S3Role
     Properties:
       Handler: 'main.handler'
-      Role: !GetAtt LambdaRole.Arn
+      Role: !GetAtt S3Role.Arn
       Runtime: python3.7
       Timeout: 10
       Code:
         S3Bucket: !Ref S3Bucket
         S3Key: !Ref S3Key
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt LambdaFunction.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: 'events.amazonaws.com'
+      SourceArn: !GetAtt Cron.Arn
+  Cron:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: 'rate(30 minutes)'
+      Targets:
+        -
+          Id: 'KoelScheduler'
+          Arn: !GetAtt LambdaFunction.Arn
