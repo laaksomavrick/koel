@@ -4,6 +4,10 @@ import yaml
 
 
 class Config:
+    """
+    Config provides a class which is intended to be a python object representation of the config.yaml
+    file, which defines the configuration values for a Koel instance.
+    """
     def __init__(self):
         logging.info("Reading config from config.yaml")
         with open("config.yaml", "r") as stream:
