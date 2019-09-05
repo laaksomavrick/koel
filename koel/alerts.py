@@ -1,10 +1,10 @@
 import json
 import logging
-import os
 from dataclasses import dataclass
 from typing import Dict, List
 
 import dateutil.parser
+from smart_open import open
 
 from koel.sms_client import SMSClient
 
@@ -75,12 +75,18 @@ class AlertStorage:
     @staticmethod
     def create_storage(fs_path):
         logging.info(f"Creating storage at: {fs_path}")
-        with open(fs_path, "w+") as file:
+        with open(fs_path, "w") as file:
             json.dump({}, file)
 
     @staticmethod
     def storage_exists(fs_path: str) -> bool:
-        return os.path.exists(fs_path)
+        try:
+            open(fs_path, "r")
+            logging.info(f"Found storage at: {fs_path}")
+            return True
+        except:
+            logging.info(f"Did not find storage at: {fs_path}")
+            return False
 
 
 class Alerter:

@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: 'The koel cloudformation stack'
+Parameters:
+  S3Bucket:
+    Type: String
+    Description: The S3Bucket where the lambda zip file can be found
+  S3Key:
+    Type: String
+    Description: The file name of the lambda zip file
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: 'koel-storage'
+  S3Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - s3.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: '/'
+      RoleName: RawDataBucketAccessRole
+      Policies:
+        -
+          PolicyName: RawDataBucketAccessRole
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - 's3:Get*'
+                  - 's3:List*'
+                  - 's3:Put*'
+                Resource: '*'
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: S3Role
+    Properties:
+      Handler: 'main.handler'
+      Role: !GetAtt S3Role.Arn
+      Runtime: python3.7
+      Timeout: 10
+      Code:
+        S3Bucket: !Ref S3Bucket
+        S3Key: !Ref S3Key
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt LambdaFunction.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: 'events.amazonaws.com'
+      SourceArn: !GetAtt Cron.Arn
+  Cron:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: 'rate(30 minutes)'
+      Targets:
+        -
+          Id: 'KoelScheduler'
+          Arn: !GetAtt LambdaFunction.Arn
