@@ -37,7 +37,7 @@ class Alert:
         """
         Get the sms_message for a given alert.
         """
-        return self.summary
+        return self.title
 
 
 class AlertStorage:
